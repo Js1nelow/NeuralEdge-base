@@ -1527,14 +1527,26 @@ restoreResult();
         });
     }
 
-    document.getElementById("cpTabs").addEventListener("click", (e)=>{
-        const tab = e.target.closest(".cp-tab");
-        if (!tab) return;
-        document.querySelectorAll(".cp-tab").forEach(t=>t.setAttribute("aria-selected","false"));
-        tab.setAttribute("aria-selected","true");
-        currentTab = tab.dataset.tab;
-        render();
-    });
+   document.getElementById("cpTabs").addEventListener("click", (e)=>{
+    const tab = e.target.closest(".cp-tab");
+    if (!tab) return;
+    
+    const targetTab = tab.dataset.tab;
+
+    // Разрешаем только 'fiat' (Валюты), остальные требуют VIP
+    if (targetTab !== "fiat") {
+        // Закрываем окно выбора пар
+        window.CurrencyPairPopup.close();
+        // Имитируем клик по кнопке VIP, чтобы открылось окно покупки
+        document.getElementById("vipBtn").click();
+        return; // Прерываем выполнение, чтобы вкладка не переключилась
+    }
+
+    document.querySelectorAll(".cp-tab").forEach(t=>t.setAttribute("aria-selected","false"));
+    tab.setAttribute("aria-selected","true");
+    currentTab = targetTab;
+    render();
+});
 
     // Debounced search
     let _st = 0;
